@@ -1,2 +1,2 @@
 # dynamic-tkinter-dialog
- obvious in name
+obvious in name

@@ -1,0 +1,2 @@
+
+REQUIRE_INIT_VALIDATE = False
