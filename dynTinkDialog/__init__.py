@@ -18,7 +18,7 @@ MATCHING_MAP :  typing.Dict[str, Entry] = {
     "text" : TextEntry,
     "file" : FileEntry,
     "folder" : FolderEntry,
-    "int"  : IntEntry
+    "int"  : IntEntry,
 }
 
 def create_entries(master : tk.Frame, data : dict) -> typing.Dict[str, Entry]:
@@ -38,15 +38,15 @@ def create_entries(master : tk.Frame, data : dict) -> typing.Dict[str, Entry]:
         tk.Label(master, text="").pack()
         entry.create_widgets(master)
         
-        
     return entries
 
 
 class DialogBox(tk.Frame):
-    def __init__(self, master=None, data=None):
+    def __init__(self, master=None, data=None, output_in_list=False):
         super().__init__(master)
         self.master : tk.Frame = master
         self.json : dict = data
+        self.output_in_list = output_in_list
         # bigger window, font and center
         self.master.geometry("500x500")
         self.master.option_add("*Font", "arial 15")
@@ -67,10 +67,15 @@ class DialogBox(tk.Frame):
         output = {}
         for key, widget in self.widgets.items():
             output[key] = widget.get()
-        print(output)
+        if self.output_in_list:
+            output = list(output.values())
+            print("\n".join(output))
+        else:
+            print(output)
+            
         return super().quit()
  
-def create_window(data=None):
+def create_window(data=None, list=False):
     # create a root window
     root = tk.Tk()
     
@@ -86,15 +91,16 @@ def create_window(data=None):
         sys.exit(1)
         
     # create a dialog box with the json data
-    app = DialogBox(master=root, data=data)
+    app = DialogBox(master=root, data=data, output_in_list=list)
     # run the dialog box
     app.mainloop()
 
  
 @click.command()
-@click.option("--data", default=None, help="json data to be used in the dialog box")    
-def main(data=None):
-    create_window(data)
+@click.option("--data", default=None, help="json data to be used in the dialog box")
+@click.option('--list', is_flag=True, help="output in list format")
+def main(data=None, list=False):
+    create_window(data, list=list)
 
 if __name__ == "__main__":
     main()
